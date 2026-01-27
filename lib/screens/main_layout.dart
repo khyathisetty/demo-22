@@ -23,11 +23,18 @@ class _MainLayoutState extends State<MainLayout> {
     CropsScreen(),
   ];
 
+  final List<String> _titles = const [
+    'Hello, Farmer!',
+    'Sensor Data',
+    'AI Assistant',
+    'Recommendations',
+  ];
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Smart Agriculture'),
+        title: Text(_titles[_currentIndex]),
         actions: [
           IconButton(
             icon: const Icon(Icons.settings),
@@ -47,7 +54,8 @@ class _MainLayoutState extends State<MainLayout> {
       ),
       bottomNavigationBar: BottomNavigationBar(
         currentIndex: _currentIndex,
-        selectedItemColor: const Color(0xFF7FB77E),
+        type: BottomNavigationBarType.fixed, // Ensure label visibility and alignment
+        selectedItemColor: const Color(0xFF2E7D32),
         unselectedItemColor: Colors.grey,
         onTap: (index) {
           setState(() {

@@ -1,16 +1,63 @@
-# flutter_projects
+# Smart Agriculture App
 
-A new Flutter project.
+A comprehensive Flutter application designed to assist farmers with smart agriculture solutions, including crop management, sensor monitoring, and AI-powered assistance.
+
+## Features
+
+- **Authentication**: Secure login with demo credentials.
+- **Home Dashboard**: Overview of agricultural status.
+- **Sensor Monitoring**: Real-time visualization of sensor data.
+- **Crop Management**: Tools for tracking and managing crops.
+- **Chatbot**: AI assistant for agricultural queries.
+- **Settings**: Application configuration.
 
 ## Getting Started
 
-This project is a starting point for a Flutter application.
+### Prerequisites
 
-A few resources to get you started if this is your first Flutter project:
+- [Flutter SDK](https://docs.flutter.dev/get-started/install)
+- Dart SDK (included with Flutter)
+- Android Studio / VS Code / Xcode (for iOS)
 
-- [Lab: Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://docs.flutter.dev/cookbook)
+### Installation
 
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+1.  **Clone the repository:**
+    ```bash
+    git clone https://github.com/yourusername/smart-agriculture.git
+    cd smart-agriculture
+    ```
+
+2.  **Install dependencies:**
+    ```bash
+    flutter pub get
+    ```
+
+3.  **Run the application:**
+    ```bash
+    flutter run
+    ```
+
+## Login Credentials (Demo)
+
+Use the following credentials to log in to the application:
+
+*   **Mobile Number:** `1234567890`
+*   **Password:** `password`
+
+## Project Structure
+
+```
+lib/
+├── main.dart           # Entry point
+├── screens/            # Application screens (Login, Home, Sensors, etc.)
+├── theme/              # App theming and styling
+└── widgets/            # Reusable UI components
+```
+
+## Development
+
+- **State Management**: Uses `StatefulWidget` for local state.
+- **Navigation**: Uses basic `Navigator` push/pop.
+- **UI**: Custom theming with a focus on ease of use.
+
+For more help with Flutter, check out the [online documentation](https://docs.flutter.dev/).
