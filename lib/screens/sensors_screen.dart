@@ -1,56 +1,66 @@
 import 'package:flutter/material.dart';
+import '../utils/app_state.dart';
 
 class SensorsScreen extends StatelessWidget {
   const SensorsScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
-    return ListView(
-      padding: const EdgeInsets.all(16),
-      children: [
-        Row(
-          children: [
-            Container(
-              width: 10,
-              height: 10,
-              decoration: const BoxDecoration(
-                color: Colors.green,
-                shape: BoxShape.circle,
+    return AnimatedBuilder(
+      animation: AppState.instance,
+      builder: (context, _) {
+       final isHighContrast = AppState.instance.isHighContrast;
+       
+       return ListView(
+        padding: const EdgeInsets.all(16),
+        children: [
+          Row(
+            children: [
+              Container(
+                width: 10,
+                height: 10,
+                decoration: const BoxDecoration(
+                  color: Colors.green,
+                  shape: BoxShape.circle,
+                ),
               ),
-            ),
-            const SizedBox(width: 8),
-            Text(
-              'Live Updates Active',
-              style: TextStyle(
-                color: Colors.grey[600],
-                fontWeight: FontWeight.w500,
+              const SizedBox(width: 8),
+              Text(
+                AppState.instance.getString('live_updates'),
+                style: TextStyle(
+                  color: isHighContrast ? Colors.white70 : Colors.grey[600],
+                  fontWeight: FontWeight.w500,
+                ),
               ),
-            ),
-          ],
-        ),
-        const SizedBox(height: 16),
-        _buildSensorCard(
-          title: 'Soil Moisture',
-          icon: Icons.water_drop_outlined,
-          value: '45%',
-          status: 'Optimal',
-          statusColor: Colors.green.shade100,
-          statusTextColor: Colors.green.shade800,
-          progress: 0.45,
-          progressColor: Colors.green,
-        ),
-        _buildSensorCard(
-          title: 'Temperature',
-          icon: Icons.thermostat_outlined,
-          value: '27°C',
-          status: 'Normal',
-          statusColor: Colors.orange.shade100,
-          statusTextColor: Colors.orange.shade800,
-          progress: 0.6, // Approximate for 27 C
-          progressColor: Colors.orange,
-        ),
-        _buildNpkDetailedCard(),
-      ],
+            ],
+          ),
+          const SizedBox(height: 16),
+          _buildSensorCard(
+            title: AppState.instance.getString('soil_moisture'),
+            icon: Icons.water_drop_outlined,
+            value: '45%',
+            status: AppState.instance.getString('optimal'),
+            statusColor: isHighContrast ? Colors.greenAccent : Colors.green.shade100,
+            statusTextColor: isHighContrast ? Colors.black : Colors.green.shade800,
+            progress: 0.45,
+            progressColor: isHighContrast ? Colors.greenAccent : Colors.green,
+            isHighContrast: isHighContrast,
+          ),
+          _buildSensorCard(
+            title: AppState.instance.getString('temperature'),
+            icon: Icons.thermostat_outlined,
+            value: '27°C',
+            status: AppState.instance.getString('optimal'),
+            statusColor: isHighContrast ? Colors.orangeAccent : Colors.orange.shade100,
+            statusTextColor: isHighContrast ? Colors.black : Colors.orange.shade800,
+            progress: 0.6, 
+            progressColor: isHighContrast ? Colors.orangeAccent : Colors.orange,
+            isHighContrast: isHighContrast,
+          ),
+          _buildNpkDetailedCard(isHighContrast),
+        ],
+      );
+     }
     );
   }
 
@@ -63,8 +73,10 @@ class SensorsScreen extends StatelessWidget {
     required Color statusTextColor,
     required double progress,
     required Color progressColor,
+    required bool isHighContrast,
   }) {
     return Card(
+      color: isHighContrast ? Colors.grey[900] : Colors.white,
       margin: const EdgeInsets.only(bottom: 16),
       elevation: 2,
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
@@ -78,7 +90,7 @@ class SensorsScreen extends StatelessWidget {
               children: [
                 Row(
                   children: [
-                    Icon(icon, color: Colors.green[700], size: 20),
+                    Icon(icon, color: isHighContrast ? Colors.white : Colors.green[700], size: 20),
                     const SizedBox(width: 8),
                     Text(title,
                         style: const TextStyle(
@@ -109,7 +121,7 @@ class SensorsScreen extends StatelessWidget {
             const SizedBox(height: 8),
             LinearProgressIndicator(
               value: progress,
-              backgroundColor: Colors.grey[200],
+              backgroundColor: isHighContrast ? Colors.grey[700] : Colors.grey[200],
               color: progressColor,
               minHeight: 8,
               borderRadius: BorderRadius.circular(4),
@@ -120,8 +132,9 @@ class SensorsScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildNpkDetailedCard() {
+  Widget _buildNpkDetailedCard(bool isHighContrast) {
     return Card(
+      color: isHighContrast ? Colors.grey[900] : Colors.white,
       margin: const EdgeInsets.only(bottom: 16),
       elevation: 2,
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
@@ -135,10 +148,10 @@ class SensorsScreen extends StatelessWidget {
               children: [
                 Row(
                   children: [
-                    Icon(Icons.layers, color: Colors.brown[400], size: 20),
+                    Icon(Icons.layers, color: isHighContrast ? Colors.brown[200] : Colors.brown[400], size: 20),
                     const SizedBox(width: 8),
-                    const Text('Nutrient Levels (NPK)',
-                        style: TextStyle(
+                    Text(AppState.instance.getString('nutrient_levels'),
+                        style: const TextStyle(
                             fontWeight: FontWeight.bold, fontSize: 16)),
                   ],
                 ),
@@ -147,11 +160,11 @@ class SensorsScreen extends StatelessWidget {
               ],
             ),
             const SizedBox(height: 16),
-            _buildNutrientRow('Nitrogen (N)', 80, 0.8, Colors.green),
+            _buildNutrientRow("${AppState.instance.getString('nitrogen')} (N)", 80, 0.8, Colors.green, isHighContrast),
             const SizedBox(height: 12),
-            _buildNutrientRow('Phosphorus (P)', 60, 0.6, Colors.cyan),
+            _buildNutrientRow("${AppState.instance.getString('phosphorus')} (P)", 60, 0.6, Colors.cyan, isHighContrast),
             const SizedBox(height: 12),
-            _buildNutrientRow('Potassium (K)', 55, 0.55, Colors.amber),
+            _buildNutrientRow("${AppState.instance.getString('potassium')} (K)", 55, 0.55, Colors.amber, isHighContrast),
           ],
         ),
       ),
@@ -159,7 +172,7 @@ class SensorsScreen extends StatelessWidget {
   }
 
   Widget _buildNutrientRow(
-      String label, int value, double progress, Color color) {
+      String label, int value, double progress, Color color, bool isHighContrast) {
     return Column(
       children: [
         Row(
@@ -173,7 +186,7 @@ class SensorsScreen extends StatelessWidget {
         const SizedBox(height: 6),
         LinearProgressIndicator(
           value: progress,
-          backgroundColor: Colors.grey[200],
+          backgroundColor: isHighContrast ? Colors.grey[700] : Colors.grey[200],
           color: color,
           minHeight: 6,
           borderRadius: BorderRadius.circular(3),

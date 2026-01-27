@@ -5,11 +5,29 @@ A comprehensive Flutter application designed to assist farmers with smart agricu
 ## Features
 
 - **Authentication**: Secure login with demo credentials.
-- **Home Dashboard**: Overview of agricultural status.
-- **Sensor Monitoring**: Real-time visualization of sensor data.
-- **Crop Management**: Tools for tracking and managing crops.
-- **Chatbot**: AI assistant for agricultural queries.
-- **Settings**: Application configuration.
+- **Home Dashboard**: 
+  - Welcome greeting with "My Farm View" placeholder.
+  - Quick overview cards for Soil Moisture, Temperature, and NPK Levels.
+- **Sensor Monitoring**: 
+  - Detailed real-time visualization with progress bars.
+  - Live status indicators for Nitrogen, Phosphorus, and Potassium.
+- **AI Chatbot Assistant**: 
+  - Interactive chat interface.
+  - Quick option chips for common queries (Crop Disease, Weather, etc.).
+  - Auto-reply simulation for demo purposes.
+- **Crop Recommendations**: 
+  - AI-driven crop suggestions based on soil data.
+  - detailed match score and requirements (Rice, Maize, Groundnut).
+- **Settings & Localization**: 
+  - Toggle-able alerts for Weather, Water, Crops, etc.
+  - **Multi-language Support**: Options for English, Hindi, and Telugu.
+  - Profile and Farm details management.
+- **Accessibility**: 
+  - dedicated Accessibility floating button.
+  - Options for **Large Text**, **High Contrast**, and **Screen Reader**.
+- **UI/UX**: 
+  - Consistent pastel green agriculture theme (`#2E7D32`).
+  - Ease-of-use focus for farmers with large touch targets.
 
 ## Getting Started
 
