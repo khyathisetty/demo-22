@@ -133,6 +133,8 @@ class _MainLayoutState extends State<MainLayout> {
                         AppState.instance.setLargeText(val);
                       },
                       activeColor: const Color(0xFF2E7D32),
+                      inactiveTrackColor: Colors.grey[300],
+                      inactiveThumbColor: Colors.grey[50],
                     ),
                   ),
                   ListTile(
@@ -144,6 +146,8 @@ class _MainLayoutState extends State<MainLayout> {
                         AppState.instance.setHighContrast(val);
                       },
                       activeColor: const Color(0xFF2E7D32),
+                      inactiveTrackColor: Colors.grey[300],
+                      inactiveThumbColor: Colors.grey[50],
                     ),
                   ),
                    ListTile(
@@ -155,6 +159,8 @@ class _MainLayoutState extends State<MainLayout> {
                          // Interactive but acts as a placeholder
                       },
                       activeColor: const Color(0xFF2E7D32),
+                      inactiveTrackColor: Colors.grey[300],
+                      inactiveThumbColor: Colors.grey[50],
                     ),
                   ),
                 ],

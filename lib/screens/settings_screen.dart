@@ -276,6 +276,8 @@ class _SettingsScreenState extends State<SettingsScreen> {
           ? Icon(icon)
           : const SizedBox(width: 24), // Placeholder for alignment
       activeColor: const Color(0xFF2E7D32),
+      inactiveTrackColor: Colors.grey[300],
+      inactiveThumbColor: Colors.grey[50],
     );
   }
 }
