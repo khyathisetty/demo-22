@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../theme/app_theme.dart';
 
 class CommonBackground extends StatelessWidget {
   final Widget child;
@@ -10,12 +11,14 @@ class CommonBackground extends StatelessWidget {
     return Container(
       decoration: const BoxDecoration(
         gradient: LinearGradient(
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
           colors: [
-            Color(0xFFE8F5E9),
-            Color(0xFFF1F8E9),
+            AppColors.cream,
+            AppColors.creamDark,
+            Color(0xFFFFF3E0),
           ],
-          begin: Alignment.topCenter,
-          end: Alignment.bottomCenter,
+          stops: [0.0, 0.5, 1.0],
         ),
       ),
       child: SafeArea(child: child),

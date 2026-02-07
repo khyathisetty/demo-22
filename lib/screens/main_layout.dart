@@ -1,11 +1,13 @@
 import 'package:flutter/material.dart';
 import '../widgets/common_background.dart';
+import '../theme/app_theme.dart';
 import 'home_screen.dart';
 import 'sensors_screen.dart';
 import 'chatbot_screen.dart';
 import 'crops_screen.dart';
 import 'settings_screen.dart';
 import '../utils/app_state.dart';
+import '../utils/user_storage.dart';
 
 class MainLayout extends StatefulWidget {
   const MainLayout({super.key});
@@ -16,7 +18,21 @@ class MainLayout extends StatefulWidget {
 
 class _MainLayoutState extends State<MainLayout> {
   int _currentIndex = 0;
-  
+
+  @override
+  void initState() {
+    super.initState();
+    _loadCurrentUserName();
+  }
+
+  Future<void> _loadCurrentUserName() async {
+    if (AppState.instance.currentUserName != null) return;
+    final name = await UserStorage.getCurrentUserName();
+    if (mounted && name != null) {
+      AppState.instance.setCurrentUserName(name);
+    }
+  }
+
   final List<Widget> _screens = const [
     HomeScreen(),
     SensorsScreen(),
@@ -24,8 +40,16 @@ class _MainLayoutState extends State<MainLayout> {
     CropsScreen(),
   ];
 
+  String _getWelcomeTitle() {
+    final name = AppState.instance.currentUserName;
+    if (name != null && name.isNotEmpty) {
+      return 'Hello, $name!';
+    }
+    return AppState.instance.getString('welcome');
+  }
+
   List<String> get _titles => [
-    AppState.instance.getString('welcome'),
+    _getWelcomeTitle(),
     AppState.instance.getString('sensors'),
     AppState.instance.getString('chatbot'),
     AppState.instance.getString('crops'),
@@ -39,6 +63,8 @@ class _MainLayoutState extends State<MainLayout> {
        return Scaffold(
           appBar: AppBar(
             title: Text(_titles[_currentIndex]),
+            backgroundColor: AppState.instance.isHighContrast ? Colors.black : AppColors.farmGreenDark,
+            foregroundColor: Colors.white,
             actions: [
               IconButton(
                 icon: const Icon(Icons.settings),
@@ -56,42 +82,53 @@ class _MainLayoutState extends State<MainLayout> {
           body: CommonBackground(
             child: _screens[_currentIndex],
           ),
-          bottomNavigationBar: BottomNavigationBar(
-            currentIndex: _currentIndex,
-            type: BottomNavigationBarType.fixed, // Ensure label visibility and alignment
-            selectedItemColor: AppState.instance.isHighContrast ? const Color(0xFF00FF00) : const Color(0xFF2E7D32),
-            unselectedItemColor: Colors.grey,
-            backgroundColor: AppState.instance.isHighContrast ? Colors.black : Colors.white,
+          bottomNavigationBar: Container(
+            decoration: BoxDecoration(
+              color: AppState.instance.isHighContrast ? Colors.black : Colors.white,
+              boxShadow: [
+                BoxShadow(
+                  color: AppColors.earthBrown.withValues(alpha: 0.15),
+                  blurRadius: 12,
+                  offset: const Offset(0, -4),
+                ),
+              ],
+            ),
+            child: BottomNavigationBar(
+              currentIndex: _currentIndex,
+              type: BottomNavigationBarType.fixed,
+              selectedItemColor: AppState.instance.isHighContrast ? const Color(0xFF00FF00) : AppColors.farmGreen,
+              unselectedItemColor: AppColors.earthBrownLight,
+              backgroundColor: Colors.transparent,
+              elevation: 0,
             onTap: (index) {
               setState(() {
                 _currentIndex = index;
               });
             },
-            items: [
-              BottomNavigationBarItem(
-                icon: const Icon(Icons.home),
-                label: AppState.instance.getString('home'),
-              ),
-              BottomNavigationBarItem(
-                icon: const Icon(Icons.sensors),
-                label: AppState.instance.getString('sensors'),
-              ),
-              BottomNavigationBarItem(
-                icon: const Icon(Icons.chat),
-                label: AppState.instance.getString('chatbot'),
-              ),
-              BottomNavigationBarItem(
-                icon: const Icon(Icons.grass),
-                label: AppState.instance.getString('crops'),
-              ),
-            ],
+              items: [
+                BottomNavigationBarItem(
+                  icon: const Icon(Icons.home_rounded),
+                  label: AppState.instance.getString('home'),
+                ),
+                BottomNavigationBarItem(
+                  icon: const Icon(Icons.sensors_rounded),
+                  label: AppState.instance.getString('sensors'),
+                ),
+                BottomNavigationBarItem(
+                  icon: const Icon(Icons.chat_rounded),
+                  label: AppState.instance.getString('chatbot'),
+                ),
+                BottomNavigationBarItem(
+                  icon: const Icon(Icons.eco_rounded),
+                  label: AppState.instance.getString('crops'),
+                ),
+              ],
+            ),
           ),
           floatingActionButton: FloatingActionButton(
-            onPressed: () {
-              _showAccessibilityOptions(context);
-            },
-            backgroundColor: AppState.instance.isHighContrast ? Colors.grey[800] : const Color(0xFF2E7D32),
-            child: const Icon(Icons.accessibility_new, color: Colors.white),
+            onPressed: () => _showAccessibilityOptions(context),
+            backgroundColor: AppState.instance.isHighContrast ? Colors.grey[800] : AppColors.farmGreenDark,
+            child: const Icon(Icons.accessibility_new_rounded, color: Colors.white),
           ),
         );
       }
@@ -109,58 +146,50 @@ class _MainLayoutState extends State<MainLayout> {
           animation: AppState.instance,
           builder: (context, _) {
             return Container(
-              padding: const EdgeInsets.all(20),
-              color: AppState.instance.isHighContrast ? Colors.black : Colors.white,
+              padding: const EdgeInsets.all(24),
+              decoration: BoxDecoration(
+                color: AppState.instance.isHighContrast ? Colors.black : Colors.white,
+                borderRadius: const BorderRadius.vertical(top: Radius.circular(24)),
+                border: Border.all(color: AppColors.creamDark),
+              ),
               child: Column(
                 mainAxisSize: MainAxisSize.min,
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                   Text(
+                  Text(
                     AppState.instance.getString('accessibility_options'),
                     style: TextStyle(
                       fontSize: 20,
                       fontWeight: FontWeight.bold,
-                      color: AppState.instance.isHighContrast ? const Color(0xFF00FF00) : const Color(0xFF2E7D32),
+                      color: AppState.instance.isHighContrast ? const Color(0xFF00FF00) : AppColors.farmGreen,
                     ),
                   ),
                   const SizedBox(height: 20),
                   ListTile(
-                    leading: const Icon(Icons.text_fields),
+                    leading: Icon(Icons.text_fields_rounded, color: AppColors.earthBrownLight),
                     title: Text(AppState.instance.getString('large_text')),
                     trailing: Switch(
                       value: AppState.instance.isLargeText,
-                      onChanged: (val) {
-                        AppState.instance.setLargeText(val);
-                      },
-                      activeColor: const Color(0xFF2E7D32),
-                      inactiveTrackColor: Colors.grey[300],
-                      inactiveThumbColor: Colors.grey[50],
+                      onChanged: (val) => AppState.instance.setLargeText(val),
+                      activeColor: AppColors.farmGreen,
                     ),
                   ),
                   ListTile(
-                    leading: const Icon(Icons.contrast),
+                    leading: Icon(Icons.contrast_rounded, color: AppColors.earthBrownLight),
                     title: Text(AppState.instance.getString('high_contrast')),
                     trailing: Switch(
                       value: AppState.instance.isHighContrast,
-                      onChanged: (val) {
-                        AppState.instance.setHighContrast(val);
-                      },
-                      activeColor: const Color(0xFF2E7D32),
-                      inactiveTrackColor: Colors.grey[300],
-                      inactiveThumbColor: Colors.grey[50],
+                      onChanged: (val) => AppState.instance.setHighContrast(val),
+                      activeColor: AppColors.farmGreen,
                     ),
                   ),
-                   ListTile(
-                    leading: const Icon(Icons.record_voice_over),
+                  ListTile(
+                    leading: Icon(Icons.record_voice_over_rounded, color: AppColors.earthBrownLight),
                     title: Text(AppState.instance.getString('screen_reader')),
                     trailing: Switch(
-                      value: false, // Placeholder as we can't toggle OS screen reader
-                      onChanged: (val) {
-                         // Interactive but acts as a placeholder
-                      },
-                      activeColor: const Color(0xFF2E7D32),
-                      inactiveTrackColor: Colors.grey[300],
-                      inactiveThumbColor: Colors.grey[50],
+                      value: false,
+                      onChanged: (_) {},
+                      activeColor: AppColors.farmGreen,
                     ),
                   ),
                 ],

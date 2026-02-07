@@ -18,20 +18,8 @@ class MyApp extends StatelessWidget {
         return MaterialApp(
           debugShowCheckedModeBanner: false,
           title: AppState.instance.getString('app_title'),
-          theme: AppState.instance.isHighContrast 
-              ? ThemeData.dark().copyWith(
-                  primaryColor: const Color(0xFF00FF00),
-                  scaffoldBackgroundColor: Colors.black,
-                  appBarTheme: const AppBarTheme(
-                    backgroundColor: Colors.black,
-                    foregroundColor: Colors.white,
-                    elevation: 0,
-                  ),
-                   colorScheme: ColorScheme.fromSwatch(brightness: Brightness.dark).copyWith(
-                    primary: const Color(0xFF00FF00),
-                    secondary: Colors.white,
-                  ),
-                )
+          theme: AppState.instance.isHighContrast
+              ? AppTheme.lightThemeHighContrast
               : AppTheme.lightTheme,
           builder: (context, child) {
             return MediaQuery(

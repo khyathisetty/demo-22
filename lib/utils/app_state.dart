@@ -9,11 +9,13 @@ class AppState extends ChangeNotifier {
   String _languageCode = 'en';
   bool _isLargeText = false;
   bool _isHighContrast = false;
+  String? _currentUserName;
 
   // Getters
   String get languageCode => _languageCode;
   bool get isLargeText => _isLargeText;
   bool get isHighContrast => _isHighContrast;
+  String? get currentUserName => _currentUserName;
 
   // Actions
   void setLanguage(String code) {
@@ -33,6 +35,13 @@ class AppState extends ChangeNotifier {
   void setHighContrast(bool enable) {
     if (_isHighContrast != enable) {
       _isHighContrast = enable;
+      notifyListeners();
+    }
+  }
+
+  void setCurrentUserName(String? name) {
+    if (_currentUserName != name) {
+      _currentUserName = name;
       notifyListeners();
     }
   }
@@ -88,7 +97,23 @@ class AppState extends ChangeNotifier {
       'accessibility_options': 'Accessibility Options',
       'large_text': 'Large Text',
       'high_contrast': 'High Contrast',
-      'screen_reader': 'Screen Reader'
+      'screen_reader': 'Screen Reader',
+      'login': 'Login',
+      'register': 'Register',
+      'village': 'Village',
+      'mobile_number': 'Mobile Number',
+      'login_with_phone': 'Login with your registered phone number',
+      'register_as_farmer': 'Register as Farmer',
+      'dont_have_account': "Don't have an account?",
+      'already_have_account': 'Already have an account?',
+      'register_here': 'Register here',
+      'login_here': 'Login here',
+      'invalid_phone': 'Please enter a valid phone number',
+      'user_not_found': 'No account found with this phone. Please register first.',
+      'phone_already_registered': 'This phone number is already registered.',
+      'registration_success': 'Registration successful! You can now login.',
+      'smart_agriculture': 'Smart Agriculture',
+      'fill_all_fields': 'Please fill name, village and phone number',
     },
     'hi': {
       'app_title': 'स्मार्ट कृषि',
@@ -139,7 +164,23 @@ class AppState extends ChangeNotifier {
       'accessibility_options': 'सुलभता विकल्प',
       'large_text': 'बड़ा पाठ',
       'high_contrast': 'उच्च कंट्रास्ट',
-      'screen_reader': 'स्क्रीन रीडर'
+      'screen_reader': 'स्क्रीन रीडर',
+      'login': 'लॉगिन',
+      'register': 'रजिस्टर',
+      'village': 'गाँव',
+      'mobile_number': 'मोबाइल नंबर',
+      'login_with_phone': 'अपने रजिस्टर्ड फोन नंबर से लॉगिन करें',
+      'register_as_farmer': 'किसान के रूप में रजिस्टर करें',
+      'dont_have_account': 'खाता नहीं है?',
+      'already_have_account': 'पहले से खाता है?',
+      'register_here': 'यहाँ रजिस्टर करें',
+      'login_here': 'यहाँ लॉगिन करें',
+      'invalid_phone': 'कृपया वैध मोबाइल नंबर दर्ज करें',
+      'user_not_found': 'इस नंबर से कोई खाता नहीं मिला। कृपया पहले रजिस्टर करें।',
+      'phone_already_registered': 'यह नंबर पहले से रजिस्टर्ड है।',
+      'registration_success': 'रजिस्ट्रेशन सफल! अब आप लॉगिन कर सकते हैं।',
+      'smart_agriculture': 'स्मार्ट कृषि',
+      'fill_all_fields': 'कृपया नाम, गाँव और फोन नंबर भरें',
     },
     'te': {
       'app_title': 'స్మార్ట్ వ్యవసాయం',
@@ -190,7 +231,90 @@ class AppState extends ChangeNotifier {
       'accessibility_options': 'ప్రాప్యత ఎంపికలు',
       'large_text': 'పెద్ద వచనం',
       'high_contrast': 'అధిక కాంట్రాస్ట్',
-      'screen_reader': 'స్క్రీన్ రీడర్'
+      'screen_reader': 'స్క్రీన్ రీడర్',
+      'login': 'లాగిన్',
+      'register': 'నమోదు',
+      'village': 'గ్రామం',
+      'mobile_number': 'మొబైల్ నంబర్',
+      'login_with_phone': 'మీ నమోదైన ఫోన్ నంబర్‌తో లాగిన్ అవండి',
+      'register_as_farmer': 'రైతుగా నమోదు చేయండి',
+      'dont_have_account': 'ఖాతా లేదా?',
+      'already_have_account': 'ఇప్పటికే ఖాతా ఉందా?',
+      'register_here': 'ఇక్కడ నమోదు చేయండి',
+      'login_here': 'ఇక్కడ లాగిన్ అవండి',
+      'invalid_phone': 'దయచేసి చెల్లుబాటు అయ్యే ఫోన్ నంబర్ నమోదు చేయండి',
+      'user_not_found': 'ఈ నంబర్‌తో ఖాతా లేదు. దయచేసి మొదట నమోదు చేయండి.',
+      'phone_already_registered': 'ఈ నంబర్ ఇప్పటికే నమోదైంది.',
+      'registration_success': 'నమోదు విజయవంతం! ఇప్పుడు మీరు లాగిన్ చేయవచ్చు.',
+      'smart_agriculture': 'స్మార్ట్ వ్యవసాయం',
+      'fill_all_fields': 'దయచేసి పేరు, గ్రామం మరియు ఫోన్ నంబర్ నమోదు చేయండి',
+    },
+    'ta': {
+      'app_title': 'ஸ்மார்ட் விவசாயம்',
+      'welcome': 'வணக்கம், விவசாயி!',
+      'welcome_back': 'மீண்டும் வரவேற்கிறோம்',
+      'farm_overview': 'உங்கள் பண்ணையின் கண்ணோட்டம் இங்கே',
+      'my_farm_view': 'என் பண்ணை பார்வை',
+      'soil_moisture': 'மண் ஈரப்பதம்',
+      'soil_temp': 'மண் வெப்பநிலை',
+      'soil_npk': 'மண் NPK அளவுகள்',
+      'optimal': 'உகந்த',
+      'suitable': 'பொருத்தமான',
+      'balanced': 'சமநிலை',
+      'home': 'முகப்பு',
+      'sensors': 'சென்சார்கள்',
+      'chatbot': 'சாட்போட்',
+      'crops': 'பயிர்கள்',
+      'live_updates': 'நேரடி புதுப்பிப்புகள் செயலில்',
+      'temperature': 'வெப்பநிலை',
+      'nutrient_levels': 'ஊட்டச்சத்து அளவுகள் (NPK)',
+      'nitrogen': 'நைட்ரஜன்',
+      'phosphorus': 'பாஸ்பரஸ்',
+      'potassium': 'பொட்டாசியம்',
+      'ai_analysis': 'AI பகுப்பாய்வு முடிந்தது',
+      'analysis_desc': 'இன்றைய மண் சென்சர் வாசிப்புகளின் அடிப்படையில்.',
+      'high_match': 'உயர் பொருத்தம்',
+      'moderate_match': 'மிதமான பொருத்தம்',
+      'excellent_match': 'சிறந்த பொருத்தம்',
+      'settings': 'அமைப்புகள்',
+      'my_profile': 'என் சுயவிவரம்',
+      'my_farm': 'என் பண்ணை',
+      'alerts': 'எச்சரிக்கைகள்',
+      'general': 'பொது',
+      'weather_alert': 'வானிலை எச்சரிக்கை',
+      'water_alert': 'நீர் எச்சரிக்கை',
+      'crop_tips': 'பயிர் உதவிக்குறிப்புகள்',
+      'price_updates': 'விலை புதுப்பிப்புகள்',
+      'language': 'மொழி',
+      'help_support': 'உதவி மற்றும் ஆதரவு',
+      'app_info': 'பயன்பாட்டு தகவல்',
+      'save_changes': 'மாற்றங்களை சேமிக்கவும்',
+      'exit_settings': 'அமைப்புகளிலிருந்து வெளியேறு',
+      'exit_saved': 'அமைப்புகள் வெற்றிகரமாக சேமிக்கப்பட்டன!',
+      'name': 'பெயர்',
+      'phone': 'தொலைபேசி',
+      'location': 'இடம்',
+      'farm_size': 'பண்ணை அளவு',
+      'accessibility_options': 'அணுகல் விருப்பங்கள்',
+      'large_text': 'பெரிய உரை',
+      'high_contrast': 'உயர் காண்ட்ராஸ்ட்',
+      'screen_reader': 'திரை வாசகர்',
+      'login': 'உள்நுழை',
+      'register': 'பதிவு',
+      'village': 'கிராமம்',
+      'mobile_number': 'மொபைல் எண்',
+      'login_with_phone': 'பதிவுசெய்த தொலைபேசி எண்ணுடன் உள்நுழையவும்',
+      'register_as_farmer': 'விவசாயியாக பதிவு செய்யுங்கள்',
+      'dont_have_account': 'கணக்கு இல்லையா?',
+      'already_have_account': 'ஏற்கனவே கணக்கு உள்ளதா?',
+      'register_here': 'இங்கே பதிவு செய்யுங்கள்',
+      'login_here': 'இங்கே உள்நுழையவும்',
+      'invalid_phone': 'செல்லுபடியான தொலைபேசி எண்ணை உள்ளிடவும்',
+      'user_not_found': 'இந்த எண்ணுடன் கணக்கு இல்லை. முதலில் பதிவு செய்யுங்கள்.',
+      'phone_already_registered': 'இந்த எண் ஏற்கனவே பதிவு செய்யப்பட்டுள்ளது.',
+      'registration_success': 'பதிவு வெற்றி! இப்போது நீங்கள் உள்நுழையலாம்.',
+      'smart_agriculture': 'ஸ்மார்ட் விவசாயம்',
+      'fill_all_fields': 'தயவுசெய்து பெயர், கிராமம் மற்றும் தொலைபேசி எண்ணை நிரப்பவும்',
     }
   };
 

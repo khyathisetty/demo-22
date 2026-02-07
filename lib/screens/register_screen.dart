@@ -3,30 +3,39 @@ import '../utils/app_state.dart';
 import '../utils/user_storage.dart';
 import '../widgets/common_background.dart';
 import '../theme/app_theme.dart';
-import 'main_layout.dart';
-import 'register_screen.dart';
+import 'login_screen.dart';
 
-class LoginScreen extends StatefulWidget {
-  const LoginScreen({super.key});
+class RegisterScreen extends StatefulWidget {
+  const RegisterScreen({super.key});
 
   @override
-  State<LoginScreen> createState() => _LoginScreenState();
+  State<RegisterScreen> createState() => _RegisterScreenState();
 }
 
-class _LoginScreenState extends State<LoginScreen> {
+class _RegisterScreenState extends State<RegisterScreen> {
+  final _nameController = TextEditingController();
+  final _villageController = TextEditingController();
   final _phoneController = TextEditingController();
   bool _isLoading = false;
   String? _errorMessage;
 
   @override
   void dispose() {
+    _nameController.dispose();
+    _villageController.dispose();
     _phoneController.dispose();
     super.dispose();
   }
 
-  Future<void> _login() async {
+  Future<void> _register() async {
+    final name = _nameController.text.trim();
+    final village = _villageController.text.trim();
     final phone = _phoneController.text.trim();
-    if (phone.isEmpty || phone.length < 10) {
+    if (name.isEmpty || village.isEmpty || phone.isEmpty) {
+      setState(() => _errorMessage = AppState.instance.getString('fill_all_fields'));
+      return;
+    }
+    if (phone.length < 10) {
       setState(() => _errorMessage = AppState.instance.getString('invalid_phone'));
       return;
     }
@@ -34,22 +43,31 @@ class _LoginScreenState extends State<LoginScreen> {
       _isLoading = true;
       _errorMessage = null;
     });
-    final user = await UserStorage.findByPhone(phone);
-    if (!mounted) return;
-    if (user == null) {
+    try {
+      await UserStorage.registerUser(
+        FarmerUser(name: name, village: village, phone: phone),
+      );
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(AppState.instance.getString('registration_success')),
+          backgroundColor: AppColors.farmGreen,
+          behavior: SnackBarBehavior.floating,
+        ),
+      );
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(builder: (_) => const LoginScreen()),
+      );
+    } catch (e) {
+      if (!mounted) return;
       setState(() {
         _isLoading = false;
-        _errorMessage = AppState.instance.getString('user_not_found');
+        _errorMessage = e.toString().contains('already')
+            ? AppState.instance.getString('phone_already_registered')
+            : e.toString();
       });
-      return;
     }
-    await UserStorage.setCurrentUser(user);
-    AppState.instance.setCurrentUserName(user.name);
-    if (!mounted) return;
-    Navigator.pushReplacement(
-      context,
-      MaterialPageRoute(builder: (_) => const MainLayout()),
-    );
   }
 
   @override
@@ -60,57 +78,38 @@ class _LoginScreenState extends State<LoginScreen> {
           padding: const EdgeInsets.symmetric(horizontal: 24),
           child: Column(
             children: [
-              const SizedBox(height: 32),
-              // Farmer hero image
+              const SizedBox(height: 28),
               ClipRRect(
                 borderRadius: BorderRadius.circular(24),
-                child: Stack(
-                  alignment: Alignment.bottomCenter,
-                  children: [
-                    Container(
-                      height: 200,
-                      width: double.infinity,
-                      decoration: BoxDecoration(
-                        color: AppColors.farmGreen.withValues(alpha: 0.3),
-                        borderRadius: BorderRadius.circular(24),
-                      ),
-                      child: Image.network(
-                        'https://images.unsplash.com/photo-1574943320219-553eb213f72d?w=800&q=80',
-                        fit: BoxFit.cover,
-                        errorBuilder: (_, __, ___) => Center(
-                          child: Icon(
-                            Icons.agriculture,
-                            size: 80,
-                            color: AppColors.farmGreen.withValues(alpha: 0.8),
-                          ),
-                        ),
-                      ),
+                child: Container(
+                  height: 140,
+                  width: double.infinity,
+                  decoration: BoxDecoration(
+                    color: AppColors.earthBrownLight.withValues(alpha: 0.2),
+                  ),
+                  child: Image.network(
+                    'https://images.unsplash.com/photo-1625246333195-78d9c38ad449?w=800&q=80',
+                    fit: BoxFit.cover,
+                    errorBuilder: (_, __, ___) => Center(
+                      child: Icon(Icons.people_alt, size: 64, color: AppColors.earthBrownLight),
                     ),
-                    Container(
-                      width: double.infinity,
-                      padding: const EdgeInsets.all(16),
-                      decoration: BoxDecoration(
-                        gradient: LinearGradient(
-                          begin: Alignment.topCenter,
-                          end: Alignment.bottomCenter,
-                          colors: [Colors.transparent, Colors.black54],
-                        ),
-                      ),
-                      child: Text(
-                        AppState.instance.getString('smart_agriculture'),
-                        style: const TextStyle(
-                          color: Colors.white,
-                          fontSize: 22,
-                          fontWeight: FontWeight.bold,
-                        ),
-                        textAlign: TextAlign.center,
-                      ),
-                    ),
-                  ],
+                  ),
                 ),
               ),
-              const SizedBox(height: 28),
-              // Login card
+              const SizedBox(height: 20),
+              AnimatedBuilder(
+                animation: AppState.instance,
+                builder: (_, __) => Text(
+                  AppState.instance.getString('register_as_farmer'),
+                  style: const TextStyle(
+                    fontSize: 20,
+                    fontWeight: FontWeight.bold,
+                    color: AppColors.soil,
+                  ),
+                  textAlign: TextAlign.center,
+                ),
+              ),
+              const SizedBox(height: 24),
               Container(
                 padding: const EdgeInsets.all(24),
                 decoration: BoxDecoration(
@@ -118,7 +117,7 @@ class _LoginScreenState extends State<LoginScreen> {
                   borderRadius: BorderRadius.circular(24),
                   boxShadow: [
                     BoxShadow(
-                      color: AppColors.earthBrown.withValues(alpha: 0.15),
+                      color: AppColors.earthBrown.withValues(alpha: 0.12),
                       blurRadius: 20,
                       offset: const Offset(0, 8),
                     ),
@@ -126,27 +125,29 @@ class _LoginScreenState extends State<LoginScreen> {
                   border: Border.all(color: AppColors.creamDark, width: 1),
                 ),
                 child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.stretch,
                   children: [
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Icon(Icons.phone_android, color: AppColors.farmGreen, size: 28),
-                        const SizedBox(width: 10),
-                        AnimatedBuilder(
-                          animation: AppState.instance,
-                          builder: (_, __) => Text(
-                            AppState.instance.getString('login_with_phone'),
-                            style: TextStyle(
-                              fontSize: 14,
-                              color: AppColors.soil.withValues(alpha: 0.8),
-                            ),
-                            textAlign: TextAlign.center,
-                          ),
+                    AnimatedBuilder(
+                      animation: AppState.instance,
+                      builder: (_, __) => TextField(
+                        controller: _nameController,
+                        decoration: InputDecoration(
+                          labelText: AppState.instance.getString('name'),
+                          prefixIcon: const Icon(Icons.person_outline, color: AppColors.earthBrownLight),
                         ),
-                      ],
+                      ),
                     ),
-                    const SizedBox(height: 24),
+                    const SizedBox(height: 16),
+                    AnimatedBuilder(
+                      animation: AppState.instance,
+                      builder: (_, __) => TextField(
+                        controller: _villageController,
+                        decoration: InputDecoration(
+                          labelText: AppState.instance.getString('village'),
+                          prefixIcon: const Icon(Icons.location_on_outlined, color: AppColors.earthBrownLight),
+                        ),
+                      ),
+                    ),
+                    const SizedBox(height: 16),
                     AnimatedBuilder(
                       animation: AppState.instance,
                       builder: (_, __) => TextField(
@@ -154,7 +155,6 @@ class _LoginScreenState extends State<LoginScreen> {
                         keyboardType: TextInputType.phone,
                         decoration: InputDecoration(
                           labelText: AppState.instance.getString('mobile_number'),
-                          hintText: '10 digit number',
                           prefixIcon: const Icon(Icons.phone, color: AppColors.earthBrownLight),
                         ),
                       ),
@@ -184,15 +184,13 @@ class _LoginScreenState extends State<LoginScreen> {
                     ],
                     const SizedBox(height: 24),
                     SizedBox(
+                      width: double.infinity,
                       height: 52,
                       child: ElevatedButton(
-                        onPressed: _isLoading ? null : _login,
+                        onPressed: _isLoading ? null : _register,
                         style: ElevatedButton.styleFrom(
                           backgroundColor: AppColors.farmGreen,
-                          foregroundColor: Colors.white,
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(14),
-                          ),
+                          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
                         ),
                         child: _isLoading
                             ? const SizedBox(
@@ -204,7 +202,7 @@ class _LoginScreenState extends State<LoginScreen> {
                                 ),
                               )
                             : Text(
-                                AppState.instance.getString('login'),
+                                AppState.instance.getString('register'),
                                 style: const TextStyle(fontSize: 18, fontWeight: FontWeight.w600),
                               ),
                       ),
@@ -212,23 +210,23 @@ class _LoginScreenState extends State<LoginScreen> {
                   ],
                 ),
               ),
-              const SizedBox(height: 24),
+              const SizedBox(height: 20),
               AnimatedBuilder(
                 animation: AppState.instance,
                 builder: (_, __) => TextButton(
                   onPressed: () {
                     Navigator.pushReplacement(
                       context,
-                      MaterialPageRoute(builder: (_) => const RegisterScreen()),
+                      MaterialPageRoute(builder: (_) => const LoginScreen()),
                     );
                   },
                   child: Text.rich(
                     TextSpan(
-                      text: AppState.instance.getString('dont_have_account'),
+                      text: AppState.instance.getString('already_have_account'),
                       style: TextStyle(color: AppColors.soil.withValues(alpha: 0.9)),
                       children: [
                         TextSpan(
-                          text: ' ${AppState.instance.getString('register_here')}',
+                          text: ' ${AppState.instance.getString('login_here')}',
                           style: const TextStyle(
                             color: AppColors.farmGreen,
                             fontWeight: FontWeight.bold,

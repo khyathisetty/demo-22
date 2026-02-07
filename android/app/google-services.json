@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "627696623179",
+    "project_id": "guna-1",
+    "storage_bucket": "guna-1.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:627696623179:android:7cbb31f2a638be55ba37ce",
+        "android_client_info": {
+          "package_name": "com.example.flutter_projects"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBpl1dBMgHmnkrwJBmBHFksnzxfcr9OPR0"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

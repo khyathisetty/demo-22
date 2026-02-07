@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import '../utils/app_state.dart';
+import '../theme/app_theme.dart';
 
 class ChatbotScreen extends StatefulWidget {
   const ChatbotScreen({super.key});
@@ -214,10 +215,10 @@ class _ChatbotScreenState extends State<ChatbotScreen> {
     return ActionChip(
       label: Text(label),
       backgroundColor: isHighContrast ? Colors.grey[900] : Colors.white,
-      side: BorderSide(color: isHighContrast ? Colors.white70 : Colors.grey[300]!),
+      side: BorderSide(color: isHighContrast ? Colors.white70 : AppColors.creamDark),
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
       onPressed: () => _handleSubmitted(label, data),
-      labelStyle: TextStyle(color: isHighContrast ? Colors.white : Colors.grey[800]),
+      labelStyle: TextStyle(color: isHighContrast ? Colors.white : AppColors.soil),
     );
   }
 
@@ -253,7 +254,7 @@ class _ChatbotScreenState extends State<ChatbotScreen> {
                 padding: const EdgeInsets.all(16),
                 decoration: BoxDecoration(
                     color: isUser 
-                      ? (isHighContrast ? Colors.grey[800] : const Color(0xFF2E7D32)) 
+                      ? (isHighContrast ? Colors.grey[800] : AppColors.farmGreen) 
                       : (isHighContrast ? Colors.black : Colors.white),
                     borderRadius: BorderRadius.only(
                       topLeft: const Radius.circular(16),
